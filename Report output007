@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#c8102e">
+<title>Output Report: Filling Pasteurize 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eaf1f8;--card:#fff;--ink:#10233b;--mut:#566b82;--bd:#c7d6e6;--chip:#f1f6fc;--acc:#1f5fa6;--accink:#fff;--red:#c8102e;--warn:#9a4a07;--bad:#b42318;--wbg:#fff3e0;--run:#e3f0ff;--stop:#c2410c;--stopink:#fff;color-scheme:light;box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1726;--card:#14253a;--ink:#e9f1fa;--mut:#9db0c4;--bd:#2b4560;--chip:#1b3049;--acc:#6db1ff;--accink:#06182d;--red:#9b1b30;--warn:#fbbf24;--bad:#ff8a80;--wbg:#3a2d12;--run:#123456;--stop:#fb923c;--stopink:#1c0d02;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c1726;--card:#14253a;--ink:#e9f1fa;--mut:#9db0c4;--bd:#2b4560;--chip:#1b3049;--acc:#6db1ff;--accink:#06182d;--red:#9b1b30;--warn:#fbbf24;--bad:#ff8a80;--wbg:#3a2d12;--run:#123456;--stop:#fb923c;--stopink:#1c0d02;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans Thai",system-ui,sans-serif;font-size:clamp(16px,1.6vw + 11px,19px);line-height:1.35;-webkit-tap-highlight-color:transparent}
+button{touch-action:manipulation;-webkit-user-select:none;user-select:none}
+header{position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(14px + env(safe-area-inset-top,0px)) 20px 36px;background:var(--red);color:#fff}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:30px;height:42px;flex:none}
+header h1{font-size:clamp(18px,4.4vw,26px);margin:0;font-weight:800;line-height:1.15}
+.sub{margin:2px 0 0;font-size:14px;opacity:.9}
+#clock{font-variant-numeric:tabular-nums;font-weight:600;text-align:right;font-size:clamp(13px,3vw,16px);flex:none}
+.wave{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:24px;display:block}
+main{display:grid;gap:14px;padding:6px 16px 190px;max-width:1180px;margin:0 auto}
+.col{display:grid;gap:14px;align-content:start}
+@media(min-width:800px){main{grid-template-columns:5fr 6fr;padding:6px 20px 150px;gap:16px}}
+@media(max-width:799px){.col{display:contents}#s-line{order:1}#s-slot{order:2}#s-prod{order:3}#s-prob{order:4}#s-out{order:5}#s-op{order:6}#s-hist{order:7}}
+section{background:var(--card);border:1.5px solid var(--bd);border-radius:16px;padding:16px}
+h2{font-size:1.05em;margin:0 0 10px;font-weight:800}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+button,select,input{font:inherit;color:inherit}
+.b{min-height:60px;padding:8px 14px;border:1.5px solid var(--bd);background:var(--chip);border-radius:14px;font-weight:600;cursor:pointer;flex:1 1 90px}
+.b.on{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+.b:active{transform:scale(.97)}
+#lines .b{font-size:1.1em;font-weight:800}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+.slot{display:grid;grid-template-columns:60px 1fr 60px;gap:10px;align-items:center}
+.slot .b{flex:none;font-size:24px;padding:0}
+#slot{text-align:center;font-size:clamp(26px,7vw,36px);font-weight:800;font-variant-numeric:tabular-nums}
+#out{display:block;width:100%;min-height:84px;border:1.5px solid var(--bd);border-radius:14px;background:var(--chip);font-size:clamp(36px,10vw,48px);font-weight:800;text-align:center;cursor:pointer;font-variant-numeric:tabular-nums}
+#out.ph{font-size:.95em;font-weight:600;color:var(--mut)}
+.unit{display:block;margin-top:6px;color:var(--mut);text-align:right;font-size:.85em}
+select,input.txt{width:100%;min-height:60px;padding:8px 12px;border:1.5px solid var(--bd);border-radius:14px;background:var(--chip);font-weight:600}
+.tip{margin:0 0 12px;color:var(--mut);font-size:.88em}
+.hide{display:none!important}
+.picked{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%}
+.picked small{display:block;color:var(--mut);font-size:.8em}
+.picked b{font-size:1.3em}
+.picked .b{flex:none;min-height:48px}
+.types{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:8px}
+.t{min-height:64px;font-size:.9em;text-align:center;flex:none}
+.t.more{border-style:dashed}
+ul{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+li{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--bd);border-radius:14px;background:var(--chip)}
+li span{flex:1;min-width:0}
+li.run{background:var(--run);border-color:var(--acc);border-left:6px solid var(--acc)}
+li.run span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--red);margin-right:8px;animation:pl 1.2s ease-in-out infinite}
+@keyframes pl{50%{opacity:.25}}
+li.run b{font-size:1.5em;font-variant-numeric:tabular-nums}
+li.mut{color:var(--mut);justify-content:center;border-style:dashed;background:transparent}
+.x,.stop{height:48px;border:1.5px solid var(--bd);border-radius:12px;background:var(--card);font-weight:800;cursor:pointer}
+.x{width:48px;color:var(--bad)}
+.stop{padding:0 18px;background:var(--stop);border-color:var(--stop);color:var(--stopink)}
+.lnk{display:block;margin:12px auto 0;border:0;background:none;color:var(--mut);text-decoration:underline;font-size:.9em;cursor:pointer;padding:8px}
+.hist li{font-size:.9em;flex-wrap:wrap}
+.hist small{color:var(--mut);width:100%}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);border-top:1.5px solid var(--bd);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.bar>*{max-width:1148px;margin-left:auto;margin-right:auto}
+.barrow{display:flex;align-items:center;gap:14px}
+.sum{display:flex;align-items:baseline;gap:6px;font-weight:600;flex:none}
+.sum b{font-size:1.9em;font-variant-numeric:tabular-nums;line-height:1}
+.sum.bad{color:var(--bad)}
+.go{min-height:60px;font-weight:800;border:0;border-radius:14px;background:var(--acc);color:var(--accink);cursor:pointer}
+.bar .go{flex:1;font-size:1.1em}
+.err{margin-bottom:8px;padding:10px 12px;border-radius:12px;background:var(--wbg);color:var(--warn);font-weight:600;border:1.5px solid var(--warn)}
+.err:empty{display:none}
+#ov{position:fixed;inset:0;background:rgba(10,20,34,.62);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+#ov.show{display:flex}
+.modal{background:var(--card);border:1.5px solid var(--bd);border-radius:18px;padding:18px;width:min(100%,420px);max-height:100%;overflow:auto}
+.modal h3{margin:0 0 12px;font-size:1.1em}
+.stack{display:grid;gap:10px}
+.disp{font-size:46px;font-weight:800;text-align:right;padding:8px 14px;border:1.5px solid var(--bd);border-radius:14px;background:var(--chip);font-variant-numeric:tabular-nums}
+.hint{color:var(--mut);margin:6px 0 0;text-align:right;font-size:.85em}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.pad button{min-height:68px;font-size:28px;font-weight:700;border:1.5px solid var(--bd);border-radius:14px;background:var(--chip);cursor:pointer}
+.pad .alt{font-size:18px;color:var(--mut)}
+.row2{display:flex;gap:10px}
+.row2 .b{min-height:64px}
+.row2 .b.go,.modal .b.go{margin:0;font-size:1.05em;flex:2;width:auto;min-height:64px;background:var(--acc);color:var(--accink);border:0}
+pre{white-space:pre-wrap;font:inherit;background:var(--chip);border:1.5px solid var(--bd);border-radius:14px;padding:12px;margin:0 0 12px}
+#toast{position:fixed;left:50%;bottom:calc(120px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--acc);color:var(--accink);padding:14px 22px;border-radius:14px;font-weight:800;display:none;z-index:30}
+@media(max-width:640px){#ov{align-items:flex-end;padding:0}.modal{width:100%;border-radius:20px 20px 0 0;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}}
+@media(max-height:600px){.pad button{min-height:50px;font-size:22px}.disp{font-size:34px}.modal{padding:12px}.pad{gap:8px;margin:8px 0}}
+@media(prefers-reduced-motion:reduce){.b:active{transform:none}li.run span::before{animation:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand">
+  <svg class="logo" viewBox="0 0 40 56" aria-hidden="true"><path d="M15 2h10v8l4 6c2 3 2 6 2 9v25a4 4 0 0 1-4 4H13a4 4 0 0 1-4-4V25c0-3 0-6 2-9l4-6z" fill="#fff"/><rect x="9" y="26" width="22" height="16" rx="3" style="fill:var(--red)"/><path d="M20 29c-2.5 3-3.5 4.5-3.5 6.2a3.5 3.5 0 0 0 7 0c0-1.700-1-3.200-3.500-6.200z" fill="#fff"/></svg>
+  <div><h1>Output Report: Filling Pasteurize 2</h1><p class="sub">รายงานยอดผลิตรายชั่วโมง · Meiji</p></div>
+ </div>
+ <div id="clock"></div>
+ <svg class="wave" viewBox="0 0 1200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 24V10c150 18 300 18 450 6s300-14 450-4 200 6 300-2v14z" style="fill:var(--bg)"/></svg>
+</header>
+<main>
+ <div class="col">
+  <section id="s-line"><h2>ไลน์ผลิต</h2><div class="row" id="lines"></div></section>
+  <section id="s-slot"><h2>ช่วงเวลาที่ผลิต</h2>
+   <div class="slot"><button class="b" data-s="-1" aria-label="ชั่วโมงก่อนหน้า">◀</button><div id="slot"></div><button class="b" data-s="1" aria-label="ชั่วโมงถัดไป">▶</button></div>
+   <div class="row" id="startrow" style="margin-top:12px"></div><p class="tip" id="runinfo" style="margin:10px 0 0"></p>
+  </section>
+  <section id="s-prod"><h2>สินค้าที่ผลิต (เลือกไซส์ แล้วเลือกรสชาติ)</h2><div class="row" id="sizes"></div><div class="types" id="flavors" style="margin-top:12px"></div></section>
+  <section id="s-out"><h2>ยอดผลิต (Output)</h2><button id="out" class="ph"></button><span class="unit">กรอกเมื่อจบชั่วโมง หน่วย: ขวด</span></section>
+  <section id="s-op"><h2>ผู้รายงาน</h2>
+   <select id="op"></select>
+  </section>
+ </div>
+ <div class="col">
+  <section id="s-prob"><h2>ปัญหาในชั่วโมงนี้</h2>
+   <p class="tip">กด "เพิ่มปัญหา" ทันทีที่เกิด เลือกปัญหาแล้วกดเริ่มจับเวลา พอแก้เสร็จกดหยุด ระบบนับนาทีให้ ปิดหน้าจอได้ ข้อมูลไม่หาย</p>
+   <button class="b" id="addp" data-opent="1" style="width:100%;font-size:1.1em">➕ เพิ่มปัญหา</button><div class="types" id="types"></div><button class="b" id="closep" data-closet="1" style="width:100%;margin-top:8px">ปิดรายการปัญหา</button>
+   <ul id="plist"></ul>
+   <button class="lnk" id="clear">ล้างข้อมูลชั่วโมงนี้</button>
+  </section>
+  <section id="s-hist"><h2>ส่งล่าสุด</h2><ul class="hist" id="hist"></ul></section>
+ </div>
+</main>
+<div class="bar">
+ <div class="err" id="err"></div>
+ <div class="barrow"><div class="sum" id="sumrow"><span>เสียเวลารวม</span><b id="tot">0</b><span>นาที</span></div><button class="go" id="review">ตรวจสอบและยืนยัน</button></div>
+</div>
+<div id="ov" role="dialog" aria-modal="true"></div>
+<div id="toast" role="status"></div>
+<script>
+const COMMON=["เปลี่ยนแทงค์นม","ลด Speed ช่วงเปลี่ยนแทงค์","คิดยอดนม Export","เปลี่ยน SKU","เช็คสารเคมี","ติด Pick Robot","ติดลังแดง","ขวดอัด Heuft","ติด Wrapround","ขวดอัด Inkjet","ฝาติดราง","รอขวด","รอลัง","รอรถ"];
+const P14=["Set up Speed","เปลี่ยนแทงค์นม","ลด Speed ช่วงเปลี่ยนแทงค์","คิดยอดนม Export","เช็คสารเคมี","เปลี่ยน SKU","ติด Pick Robot","ขวดล้ม Robot","เปลี่ยนฟอลย์","ฟอลย์ติดราง","ขวดติด Screw Infeed","ติดลังแดง","ขวดอัด Heuft","ขวดอัด Inkjet","ฝาติดราง","รอขวด","รอลัง","รอรถ"];
+const LINES={SBY9:COMMON,SBYH1:COMMON,SBY14:P14}, NAMES=Object.keys(LINES), SPEED="ลด Speed ช่วงเปลี่ยนแทงค์";
+const OPS={SBY9:["นายนันทพัทธ์ สุวรรณอัมพร","นายอวิรุทธ์ วงค์คำจันทร์","นายมงคลเขต เปรินกุล","นายจิรภัทร กลิ่นด้วง"],SBYH1:["นายสายยันต์ อินทร์ต๊ะ","นายไพรวัลย์ พรมโยธา","นายฟารุก สุดใจดี","นายธรรพ์ณธร สุวรรณลักษณ์"],SBY14:["นายกฤษดา สิริกุล","นายรุ่งโรจน์ สุดแสง","นายธีรเทพ พันธ์ลา","นายสมภพ ศิริเวช"]};
+const SIZES={SBY9:["830","450"],SBYH1:["330","350","400","450","830"],SBY14:["200","202","330","350","400","450"]};
+const FL={"200":["BN200(Export)","BN200","NF200","ML200(Export)","ML200","CF-LT200","MC-LT200","MO200","CO200(Export)","CO200","ST200(Export)","ST200","FR200(Export)","FR200","CF200(Export)","CF200","SW200","LTF UP200","PNK200"],"202":["HPCF202","HPCO202"],"330":["MCU 330","CFA 330"],"350":["HPLF350","HPLF350(Ex)","HPST350","HPST350(Ex)","HPBN350","HPBN350(Ex)","HPCF350(Ex)","HPCF350","HPML350","HPGT350(Ex)","HPGT350","HPCO350(Ex)","HPCO350","HPVN350"],"400":["LTF-UP400"],"450":["ML450","BN450","SW450","PNK450","MO450","NF450","FR450(Export)","FR450","ST450(Export)","ST450","CF450(Export)","CF450","CO450(Export)","CO450"],"830":["LF830(Export)","LF830","FR830(Export)","FR830","ST830(Export)","ST830","CF830(Export)","CF830","CO830(Export)","CO830"]};
+const $=s=>document.querySelector(s), p2=n=>String(n).padStart(2,"0"), fmt=n=>Number(n).toLocaleString("en-US");
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const slot=h=>p2(h)+":00-"+p2((h+1)%24)+":00", nowH=()=>new Date().getHours();
+let live={},hist=[],cur=NAMES[0],op="",typesOpen=false;
+try{live=JSON.parse(localStorage.getItem("hmi_live")||"{}");hist=JSON.parse(localStorage.getItem("hmi_reports")||"[]");op=localStorage.getItem("hmi_op")||""}catch(e){}
+NAMES.forEach(n=>{const x=live[n];if(x&&!x.pr.length&&!x.out)x.h=nowH()});
+const st=()=>live[cur]||(live[cur]={h:nowH(),out:"",pr:[]});
+const save=()=>{try{localStorage.setItem("hmi_live",JSON.stringify(live));localStorage.setItem("hmi_reports",JSON.stringify(hist.slice(0,20)));localStorage.setItem("hmi_op",op)}catch(e){}};
+const tot=()=>st().pr.reduce((a,x)=>a+(x.start?0:x.m),0);
+const running=()=>st().pr.filter(x=>x.start).length;
+const ov=$("#ov");
+function closeOv(){ov.classList.remove("show");ov.innerHTML="";ov.onclick=null}
+function modal(html,fn){ov.innerHTML='<div class="modal">'+html+"</div>";ov.classList.add("show");ov.onclick=e=>{const k=e.target.closest("[data-k]")?.dataset.k;if(k)fn(k)}}
+function message(){
+ const s=st(),L=["📊 Output Report: Filling Pasteurize 2","🏭 ไลน์ "+cur,"🥛 สินค้า: "+s.flavor+" ml","🕙 "+(s.start?p2(s.h)+":"+p2(s.start)+"-"+p2((s.h+1)%24)+":00":slot(s.h)),"✅ ยอดผลิต: "+fmt(s.out)+" ขวด"];
+ if(s.pr.length){L.push("⚠️ ปัญหา:");s.pr.forEach(x=>L.push(" • "+x.name+" "+x.m+" นาที"));L.push("รวมเสียเวลา "+tot()+" นาที")}else L.push("✅ ไม่มีปัญหา");
+ L.push("ผู้รายงาน: "+op);return L.join("\n");
+}
+function check(){
+ if(running())return "มีปัญหาที่ยังจับเวลาอยู่ กดหยุดก่อนส่ง";
+ if(!st().size||!st().flavor)return "เลือกไซส์และรสชาติสินค้าก่อนส่ง";
+ if(!st().out||Number(st().out)<=0)return "กรอกยอดผลิตก่อนส่ง";
+ if(!op)return "เลือกชื่อผู้รายงานก่อนส่ง";
+ {const lim=st().start?60-st().start:60;if(tot()>lim)return "เวลาที่เสียรวมเกิน "+lim+" นาที ตรวจสอบรายการอีกครั้ง"}
+ return "";
+}
+function render(){
+ const s=st();
+ $("#lines").innerHTML=NAMES.map(l=>`<button class="b ${l===cur?"on":""}" data-l="${l}">${l}</button>`).join("");
+ $("#slot").textContent=slot(s.h);
+ $("#startrow").innerHTML=`<button class="b ${s.start?"":"on"}" data-full="1">ผลิตเต็มชั่วโมง</button><button class="b ${s.start?"on":""}" data-start="1">${s.start?"เริ่มผลิต "+p2(s.h)+":"+p2(s.start):"เริ่มผลิตกลางชั่วโมง"}</button>`;
+ $("#runinfo").textContent=s.start?"ผลิตจริงในชั่วโมงนี้ "+(60-s.start)+" นาที":"";
+ $("#out").textContent=s.out?fmt(s.out):"แตะเพื่อกรอกยอดผลิต";
+ $("#out").classList.toggle("ph",!s.out);
+ $("#types").innerHTML=LINES[cur].map((n,i)=>`<button class="b t" data-t="${i}">${n}</button>`).join("")+'<button class="b t more" data-more="1">✏️ เพิ่มเติม (พิมพ์เอง)</button>';
+ $("#plist").innerHTML=s.pr.length?s.pr.map((x,i)=>x.start?`<li class="run"><span>⏱️ ${esc(x.name)}</span><b data-el="${x.start}">00:00</b><button class="stop" data-stop="${i}">หยุด</button></li>`:`<li><span>${esc(x.name)}</span><b>${x.m} นาที</b><button class="x" data-d="${i}" aria-label="ลบรายการ">✕</button></li>`).join(""):'<li class="mut">ยังไม่มีปัญหาในชั่วโมงนี้</li>';
+ $("#sizes").innerHTML=SIZES[cur].map(z=>`<button class="b ${s.size===z?"on":""}" data-z="${z}">${z}</button>`).join("");
+ $("#flavors").innerHTML=s.size&&FL[s.size]?FL[s.size].map(f=>`<button class="b t ${s.flavor===f?"on":""}" data-f="${esc(f)}">${esc(f)}</button>`).join(""):'<p class="tip" style="margin:0">เลือกไซส์ก่อน แล้วจึงเลือกรสชาติ</p>';
+ if(s.size&&s.flavor&&!s.edit){$("#sizes").innerHTML=`<div class="picked"><div><small>สินค้าที่ผลิต</small><b>${esc(s.flavor)} ml</b></div><button class="b" data-chg="1">เปลี่ยน</button></div>`;$("#flavors").innerHTML=""}
+ else if(s.size){$("#sizes").innerHTML=`<div class="picked"><div><small>ไซส์</small><b>${s.size}</b></div><button class="b" data-chgz="1">เปลี่ยนไซส์</button></div>`}
+ $("#flavors").classList.toggle("hide",!$("#flavors").innerHTML);
+ $("#types").classList.toggle("hide",!typesOpen);$("#closep").classList.toggle("hide",!typesOpen);$("#addp").classList.toggle("hide",typesOpen);
+ $("#tot").textContent=tot();$("#sumrow").classList.toggle("bad",tot()>(s.start?60-s.start:60));
+ if(!OPS[cur].includes(op))op="";
+ $("#op").innerHTML='<option value="">เลือกชื่อพนักงาน</option>'+OPS[cur].map(n=>`<option>${n}</option>`).join("");$("#op").value=op;
+ $("#hist").innerHTML=hist.length?hist.slice(0,5).map(h=>`<li><span>${esc(h.line)} ${h.slot}</span><b>${fmt(h.out)} ขวด</b><small>ส่งเมื่อ ${h.at} โดย ${esc(h.op)}</small></li>`).join(""):'<li class="mut">ยังไม่มีรายการที่ส่ง</li>';
+ tick();save();
+}
+function keypad(title,max,init,hint,cb){
+ let v=init||"";
+ const draw=()=>modal(`<h3>${esc(title)}</h3><div class="disp">${v?fmt(v):"0"}</div><p class="hint">${hint}</p><div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-k="${n}">${n}</button>`).join("")}<button class="alt" data-k="C">ล้าง</button><button class="0" data-k="0">0</button><button class="alt" data-k="B">⌫</button></div><div class="row2"><button class="b" data-k="X">ยกเลิก</button><button class="b go" data-k="OK">ตกลง</button></div>`,k=>{
+  if(k==="X")return closeOv();
+  if(k==="OK"){if(!v||Number(v)<=0)return;closeOv();return cb(v)}
+  if(k==="C")v="";else if(k==="B")v=v.slice(0,-1);
+  else{const n=(v+k).replace(/^0+/,"");if(Number(n)<=max)v=n}
+  draw()});
+ draw();
+}
+function addDlg(name){
+ modal(`<h3>${esc(name)}</h3><div class="stack"><button class="b go" data-k="START">▶ เริ่มจับเวลาตอนนี้</button><button class="b" data-k="MAN">กรอกนาทีเอง (เกิดไปแล้ว)</button><button class="b" data-k="X">ยกเลิก</button></div>`,k=>{
+  if(k==="X")return closeOv();
+  if(k==="START"){typesOpen=false;st().pr.push({name,start:Date.now()});closeOv();$("#err").textContent="";render()}
+  if(k==="MAN")keypad(name+" (นาที)",60,"","สูงสุด 60 นาที",v=>{typesOpen=false;st().pr.push({name,m:+v});$("#err").textContent="";render()})});
+}
+function speedDlg(){
+ modal(`<h3>${SPEED}</h3><div class="stack"><button class="b" data-k="ก่อน">ก่อนเปลี่ยนแทงค์</button><button class="b" data-k="หลัง">หลังเปลี่ยนแทงค์</button><button class="b" data-k="X">ยกเลิก</button></div>`,k=>{
+  if(k==="X")return closeOv();addDlg(SPEED+" ("+k+")")});
+}
+function moreDlg(){
+ modal(`<h3>เพิ่มเติม: พิมพ์ชื่อปัญหา</h3><div class="stack"><input class="txt" id="otxt" maxlength="60" placeholder="เช่น สายพานขัดข้อง"><button class="b go" data-k="NEXT">ถัดไป</button><button class="b" data-k="X">ยกเลิก</button></div>`,k=>{
+  if(k==="X")return closeOv();
+  const t=$("#otxt").value.trim();if(!t){$("#otxt").focus();return}addDlg("อื่น ๆ: "+t)});
+ setTimeout(()=>$("#otxt")&&$("#otxt").focus(),50);
+}
+function confirmDlg(){
+ modal(`<h3>ตรวจสอบก่อนส่ง</h3><pre>${esc(message())}</pre><div class="row2"><button class="b" data-k="X">ยกเลิก</button><button class="b go" data-k="SEND">ส่ง</button></div>`,async k=>{
+  if(k==="X")return closeOv();
+  const btn=ov.querySelector('[data-k="SEND"]');btn.disabled=true;btn.textContent="กำลังส่ง...";
+  const s=st(),ok=await sendReport({line:cur,slot:slot(s.h),startTime:s.start?p2(s.h)+":"+p2(s.start):null,runMinutes:s.start?60-s.start:60,size:s.size,flavor:s.flavor,out:Number(s.out),problems:s.pr.map(x=>({type:x.name,minutes:x.m})),operator:op,text:message()});
+  closeOv();
+  if(!ok){$("#err").textContent="ส่งไม่สำเร็จ ข้อมูลยังอยู่ ลองส่งอีกครั้ง";return}
+  hist.unshift({line:cur,slot:slot(s.h),out:Number(s.out),op,at:p2(new Date().getHours())+":"+p2(new Date().getMinutes())});
+  live[cur]={h:(s.h+1)%24,out:"",pr:[],size:s.size,flavor:s.flavor};$("#err").textContent="";render();toast("ส่งรายงานแล้ว")});
+}
+const GAS_URL = "https://script.google.com/macros/s/AKfycby6FracxItqq8zj7ANOFZYCCtU22243Jmj_zWfWAcvOVQi4ViKeQ7xnZeuV6uOeUGvg/exec";
+async function sendReport(payload){
+  try{
+    const res = await fetch(GAS_URL,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)
+    });
+    const data = await res.json();
+    return data.status === "ok";
+  }catch(err){
+    console.error("Send report failed:",err);
+    return false;
+  }
+}
+function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",2200)}
+function tick(){
+ document.querySelectorAll("[data-el]").forEach(e=>{const s=Math.max(0,Math.floor((Date.now()-e.dataset.el)/1000));e.textContent=p2(Math.floor(s/60))+":"+p2(s%60)});
+ const n=new Date();$("#clock").textContent=n.toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"})+"  "+p2(n.getHours())+":"+p2(n.getMinutes());
+}
+document.addEventListener("click",e=>{
+ const d=e.target.closest("button");if(!d||ov.classList.contains("show"))return;
+ const s=st();
+ if(d.dataset.l){cur=d.dataset.l;$("#err").textContent="";render()}
+ else if(d.dataset.s){s.h=(s.h+ +d.dataset.s+24)%24;s.start=null;render()}
+ else if(d.dataset.full){s.start=null;render()}
+ else if(d.dataset.chg){s.edit=true;render()}
+ else if(d.dataset.chgz){s.size="";s.flavor="";s.edit=false;render()}
+ else if(d.dataset.opent){typesOpen=true;render()}
+ else if(d.dataset.closet){typesOpen=false;render()}
+ else if(d.dataset.z){s.size=d.dataset.z;s.flavor="";$("#err").textContent="";render()}
+ else if(d.dataset.f){s.flavor=d.dataset.f;s.edit=false;$("#err").textContent="";render()}
+ else if(d.dataset.start)keypad("เริ่มผลิตนาทีที่เท่าไรของ "+p2(s.h)+":00",59,s.start?String(s.start):"","ใส่นาที 1-59 เช่น 25 = "+p2(s.h)+":25",v=>{s.start=+v;render()});
+ else if(d.id==="out")keypad("ยอดผลิต (ขวด)",999999,s.out,"สูงสุด 999,999",v=>{s.out=v;$("#err").textContent="";render()});
+ else if(d.dataset.t!==undefined){const n=LINES[cur][+d.dataset.t];n===SPEED?speedDlg():addDlg(n)}
+ else if(d.dataset.more)moreDlg();
+ else if(d.dataset.stop!==undefined){const x=s.pr[+d.dataset.stop];x.m=Math.max(1,Math.round((Date.now()-x.start)/60000));delete x.start;render()}
+ else if(d.dataset.d!==undefined){s.pr.splice(+d.dataset.d,1);render()}
+ else if(d.id==="review"){const m=check();$("#err").textContent=m;if(!m)confirmDlg()}
+ else if(d.id==="clear")modal("<h3>ล้างข้อมูลชั่วโมงนี้?</h3><p>ปัญหาและยอดผลิตที่กรอกไว้ของ "+cur+" จะหายทั้งหมด</p><div class=\"row2\"><button class=\"b\" data-k=\"X\">ไม่ล้าง</button><button class=\"b go\" data-k=\"YES\">ล้างข้อมูล</button></div>",k=>{if(k==="YES"){live[cur]={h:s.h,out:"",pr:[],size:s.size,flavor:s.flavor};render()}closeOv()});
+});
+$("#op").addEventListener("change",e=>{op=e.target.value;$("#err").textContent="";save()});
+setInterval(tick,1000);render();
+</script>
+</body>
+</html>
