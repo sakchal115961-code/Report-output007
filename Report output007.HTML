@@ -58,12 +58,18 @@ li.run span::before{content:"";display:inline-block;width:10px;height:10px;borde
 @keyframes pl{50%{opacity:.25}}
 li.run b{font-size:1.5em;font-variant-numeric:tabular-nums}
 li.mut{color:var(--mut);justify-content:center;border-style:dashed;background:transparent}
-.x,.stop{height:48px;border:1.5px solid var(--bd);border-radius:12px;background:var(--card);font-weight:800;cursor:pointer}
+.x,.stop{height:48px;border:1.5px solid var(--bd);border-radius:12px;background:var(--card);font-weight:800;cursor:pointer;flex:none}
 .x{width:48px;color:var(--bad)}
 .stop{padding:0 18px;background:var(--stop);border-color:var(--stop);color:var(--stopink)}
 .lnk{display:block;margin:12px auto 0;border:0;background:none;color:var(--mut);text-decoration:underline;font-size:.9em;cursor:pointer;padding:8px}
-.hist li{font-size:.9em;flex-wrap:wrap}
-.hist small{color:var(--mut);width:100%}
+.histhead{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:0;border:0;background:none;text-align:left;cursor:pointer}
+.histhead h2{margin:0}
+.histbadge{font-size:.82em;font-weight:600;color:var(--acc);background:var(--chip);border:1.5px solid var(--bd);padding:6px 12px;border-radius:10px;white-space:nowrap}
+.hist li{font-size:.9em}
+.hist .hinfo{flex:1;min-width:0}
+.hist .htop{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.hist small{display:block;color:var(--mut);margin-top:2px}
+.pinerr{color:var(--bad);font-weight:600;font-size:.88em;margin:6px 0 0;text-align:right;min-height:1.2em}
 .bar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);border-top:1.5px solid var(--bd);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
 .bar>*{max-width:1148px;margin-left:auto;margin-right:auto}
 .barrow{display:flex;align-items:center;gap:14px}
@@ -123,7 +129,16 @@ pre{white-space:pre-wrap;font:inherit;background:var(--chip);border:1.5px solid 
    <ul id="plist"></ul>
    <button class="lnk" id="clear">ล้างข้อมูลชั่วโมงนี้</button>
   </section>
-  <section id="s-hist"><h2>ส่งล่าสุด</h2><ul class="hist" id="hist"></ul></section>
+  <section id="s-hist">
+   <button type="button" class="histhead" id="togglehist" aria-expanded="false">
+    <h2 id="histtitle">ส่งล่าสุด</h2>
+    <span class="histbadge" id="histbadge">ดูรายการ ▾</span>
+   </button>
+   <div id="histbody" class="hide">
+    <ul class="hist" id="hist"></ul>
+    <button type="button" class="lnk" id="clearhist">🔒 ล้างประวัติส่งล่าสุดทั้งหมด</button>
+   </div>
+  </section>
  </div>
 </main>
 <div class="bar">
@@ -139,14 +154,22 @@ const LINES={SBY9:COMMON,SBYH1:COMMON,SBY14:P14}, NAMES=Object.keys(LINES), SPEE
 const OPS={SBY9:["นายนันทพัทธ์ สุวรรณอัมพร","นายอวิรุทธ์ วงค์คำจันทร์","นายมงคลเขต เปรินกุล","นายจิรภัทร กลิ่นด้วง"],SBYH1:["นายสายยันต์ อินทร์ต๊ะ","นายไพรวัลย์ พรมโยธา","นายฟารุก สุดใจดี","นายธรรพ์ณธร สุวรรณลักษณ์"],SBY14:["นายกฤษดา สิริกุล","นายรุ่งโรจน์ สุดแสง","นายธีรเทพ พันธ์ลา","นายสมภพ ศิริเวช"]};
 const SIZES={SBY9:["830","450"],SBYH1:["330","350","400","450","830"],SBY14:["200","202","330","350","400","450"]};
 const FL={"200":["BN200(Export)","BN200","NF200","ML200(Export)","ML200","CF-LT200","MC-LT200","MO200","CO200(Export)","CO200","ST200(Export)","ST200","FR200(Export)","FR200","CF200(Export)","CF200","SW200","LTF UP200","PNK200"],"202":["HPCF202","HPCO202"],"330":["MCU 330","CFA 330"],"350":["HPLF350","HPLF350(Ex)","HPST350","HPST350(Ex)","HPBN350","HPBN350(Ex)","HPCF350(Ex)","HPCF350","HPML350","HPGT350(Ex)","HPGT350","HPCO350(Ex)","HPCO350","HPVN350"],"400":["LTF-UP400"],"450":["ML450","BN450","SW450","PNK450","MO450","NF450","FR450(Export)","FR450","ST450(Export)","ST450","CF450(Export)","CF450","CO450(Export)","CO450"],"830":["LF830(Export)","LF830","FR830(Export)","FR830","ST830(Export)","ST830","CF830(Export)","CF830","CO830(Export)","CO830"]};
+const DEL_PIN="1159";
 const $=s=>document.querySelector(s), p2=n=>String(n).padStart(2,"0"), fmt=n=>Number(n).toLocaleString("en-US");
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
 const slot=h=>p2(h)+":00-"+p2((h+1)%24)+":00", nowH=()=>new Date().getHours();
-let live={},hist=[],cur=NAMES[0],op="",typesOpen=false;
-try{live=JSON.parse(localStorage.getItem("hmi_live")||"{}");hist=JSON.parse(localStorage.getItem("hmi_reports")||"[]");op=localStorage.getItem("hmi_op")||""}catch(e){}
+const todayKey=()=>{const d=new Date();return d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate())};
+let live={},hist=[],cur=NAMES[0],op="",typesOpen=false,histOpen=false;
+try{
+  live=JSON.parse(localStorage.getItem("hmi_live")||"{}");
+  hist=JSON.parse(localStorage.getItem("hmi_reports")||"[]");
+  op=localStorage.getItem("hmi_op")||"";
+}catch(e){}
+// ล้างประวัติส่งล่าสุดของวันเก่าอัตโนมัติ (เก็บเฉพาะของวันนี้ และไม่เกิน 15 รายการรวม)
+hist=hist.filter(h=>!h.day||h.day===todayKey()).slice(0,15);
 NAMES.forEach(n=>{const x=live[n];if(x&&!x.pr.length&&!x.out)x.h=nowH()});
 const st=()=>live[cur]||(live[cur]={h:nowH(),out:"",pr:[]});
-const save=()=>{try{localStorage.setItem("hmi_live",JSON.stringify(live));localStorage.setItem("hmi_reports",JSON.stringify(hist.slice(0,20)));localStorage.setItem("hmi_op",op)}catch(e){}};
+const save=()=>{try{localStorage.setItem("hmi_live",JSON.stringify(live));localStorage.setItem("hmi_reports",JSON.stringify(hist.slice(0,15)));localStorage.setItem("hmi_op",op)}catch(e){}};
 const tot=()=>st().pr.reduce((a,x)=>a+(x.start?0:x.m),0);
 const running=()=>st().pr.filter(x=>x.start).length;
 const ov=$("#ov");
@@ -184,7 +207,18 @@ function render(){
  $("#tot").textContent=tot();$("#sumrow").classList.toggle("bad",tot()>(s.start?60-s.start:60));
  if(!OPS[cur].includes(op))op="";
  $("#op").innerHTML='<option value="">เลือกชื่อพนักงาน</option>'+OPS[cur].map(n=>`<option>${n}</option>`).join("");$("#op").value=op;
- $("#hist").innerHTML=hist.length?hist.slice(0,5).map(h=>`<li><span>${esc(h.line)} ${h.slot}</span><b>${fmt(h.out)} ขวด</b><small>ส่งเมื่อ ${h.at} โดย ${esc(h.op)}</small></li>`).join(""):'<li class="mut">ยังไม่มีรายการที่ส่ง</li>';
+
+ // แสดงประวัติเฉพาะของไลน์ที่เลือก (สูงสุด 5 รายการล่าสุด) และพับเก็บเป็นค่าเริ่มต้น
+ const lineHist=hist.map((h,idx)=>({...h,idx})).filter(h=>h.line===cur).slice(0,5);
+ $("#histtitle").textContent=`ส่งล่าสุด · ${cur} (${lineHist.length})`;
+ $("#histbadge").textContent=histOpen?"ซ่อน ▴":"ดูรายการ ▾";
+ $("#togglehist").setAttribute("aria-expanded",String(histOpen));
+ $("#histbody").classList.toggle("hide",!histOpen);
+ $("#clearhist").classList.toggle("hide",!lineHist.length);
+ $("#hist").innerHTML=lineHist.length
+  ? lineHist.map(h=>`<li><div class="hinfo"><div class="htop"><span>${esc(h.line)} ${esc(h.slot)}</span><b>${fmt(h.out)} ขวด</b></div><small>ส่งเมื่อ ${esc(h.at)} โดย ${esc(h.op)}</small></div><button type="button" class="x" data-delhist="${h.idx}" aria-label="ลบประวัติรายการนี้">✕</button></li>`).join("")
+  : '<li class="mut">ยังไม่มีรายการที่ส่งของไลน์นี้วันนี้</li>';
+
  tick();save();
 }
 function keypad(title,max,init,hint,cb){
@@ -195,6 +229,21 @@ function keypad(title,max,init,hint,cb){
   if(k==="C")v="";else if(k==="B")v=v.slice(0,-1);
   else{const n=(v+k).replace(/^0+/,"");if(Number(n)<=max)v=n}
   draw()});
+ draw();
+}
+function pinDlg(title,cb){
+ let v="",errMsg="";
+ const draw=()=>modal(`<h3>🔒 ${esc(title)}</h3><div class="disp">${v?"•".repeat(v.length):"----"}</div><p class="pinerr">${esc(errMsg)}</p><div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-k="${n}">${n}</button>`).join("")}<button class="alt" data-k="C">ล้าง</button><button data-k="0">0</button><button class="alt" data-k="B">⌫</button></div><div class="row2"><button class="b" data-k="X">ยกเลิก</button><button class="b go" data-k="OK">ยืนยันลบ</button></div>`,k=>{
+  if(k==="X")return closeOv();
+  if(k==="OK"){
+   if(v===DEL_PIN){closeOv();return cb()}
+   errMsg="รหัสไม่ถูกต้อง กรุณาลองใหม่";v="";return draw();
+  }
+  errMsg="";
+  if(k==="C")v="";else if(k==="B")v=v.slice(0,-1);
+  else if(v.length<6)v+=k;
+  draw();
+ });
  draw();
 }
 function addDlg(name){
@@ -220,7 +269,7 @@ function confirmDlg(){
   const s=st(),ok=await sendReport({line:cur,slot:slot(s.h),startTime:s.start?p2(s.h)+":"+p2(s.start):null,runMinutes:s.start?60-s.start:60,size:s.size,flavor:s.flavor,out:Number(s.out),problems:s.pr.map(x=>({type:x.name,minutes:x.m})),operator:op,text:message()});
   closeOv();
   if(!ok){$("#err").textContent="ส่งไม่สำเร็จ ข้อมูลยังอยู่ ลองส่งอีกครั้ง";return}
-  hist.unshift({line:cur,slot:slot(s.h),out:Number(s.out),op,at:p2(new Date().getHours())+":"+p2(new Date().getMinutes())});
+  hist.unshift({day:todayKey(),line:cur,slot:slot(s.h),out:Number(s.out),op,at:p2(new Date().getHours())+":"+p2(new Date().getMinutes())});
   live[cur]={h:(s.h+1)%24,out:"",pr:[],size:s.size,flavor:s.flavor};$("#err").textContent="";render();toast("ส่งรายงานแล้ว")});
 }
 const GAS_URL = "https://script.google.com/macros/s/AKfycby6FracxItqq8zj7ANOFZYCCtU22243Jmj_zWfWAcvOVQi4ViKeQ7xnZeuV6uOeUGvg/exec";
@@ -261,6 +310,9 @@ document.addEventListener("click",e=>{
  else if(d.dataset.more)moreDlg();
  else if(d.dataset.stop!==undefined){const x=s.pr[+d.dataset.stop];x.m=Math.max(1,Math.round((Date.now()-x.start)/60000));delete x.start;render()}
  else if(d.dataset.d!==undefined){s.pr.splice(+d.dataset.d,1);render()}
+ else if(d.id==="togglehist"){histOpen=!histOpen;render()}
+ else if(d.dataset.delhist!==undefined){const idx=+d.dataset.delhist;pinDlg("ใส่รหัส 4 หลักเพื่อลบรายการ",()=>{hist.splice(idx,1);render();toast("ลบรายการแล้ว")})}
+ else if(d.id==="clearhist"){pinDlg("ใส่รหัส 4 หลักเพื่อล้างประวัติทั้งหมด",()=>{hist=hist.filter(h=>h.line!==cur);render();toast("ล้างประวัติเรียบร้อย")})}
  else if(d.id==="review"){const m=check();$("#err").textContent=m;if(!m)confirmDlg()}
  else if(d.id==="clear")modal("<h3>ล้างข้อมูลชั่วโมงนี้?</h3><p>ปัญหาและยอดผลิตที่กรอกไว้ของ "+cur+" จะหายทั้งหมด</p><div class=\"row2\"><button class=\"b\" data-k=\"X\">ไม่ล้าง</button><button class=\"b go\" data-k=\"YES\">ล้างข้อมูล</button></div>",k=>{if(k==="YES"){live[cur]={h:s.h,out:"",pr:[],size:s.size,flavor:s.flavor};render()}closeOv()});
 });
